@@ -54,3 +54,4 @@ export class UserController {
         return sendSuccess(res,"User Details",userDetails[0],200)
     })
 }
+

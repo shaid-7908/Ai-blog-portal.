@@ -5,7 +5,7 @@
     "isActive":true
 },
 {
-    "roleDisplayName":"admin",
+    "roleDisplayName":"Admin",
     "roleGroup":"backend",
     "isDeleted":false,
     "isActive":true

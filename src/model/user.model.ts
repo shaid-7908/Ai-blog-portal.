@@ -5,7 +5,7 @@ export const userSchema = new Schema<UserDocument>(
     {
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
-        email: { type: String, required: true, unique: true },
+        email: { type: String, required: true },
         phone: { type: String, required: true },
         profileImage: { type: String, default: '' },
         dateOfBirth: { type: Date, required: true },
