@@ -11,9 +11,9 @@ export const userSchema = new Schema<UserDocument>(
         dateOfBirth: { type: Date, required: true },
         password: { type: String, required: true },
         refreshToken: { type: String, default: '' },
-        googleId: { type: String },
         role: { type: Schema.Types.ObjectId, ref: 'Role', required: true },
-        isVerified: { type: Boolean, default: false },
+        isDeleted:{type:Boolean,default:false},
+        isActive: { type: Boolean, default: true },
     },
     {
         timestamps: true,
@@ -21,4 +21,6 @@ export const userSchema = new Schema<UserDocument>(
     }
 );
 
+userSchema.index({email:1},{unique:true,partialFilterExpression:{isDeleted:false}})
+userSchema.index({firstName:1,lastName:1})
 export const UserModel = model<UserDocument>('User', userSchema);

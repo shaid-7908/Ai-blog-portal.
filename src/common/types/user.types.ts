@@ -13,4 +13,6 @@ export interface UserDocument extends Document {
   googleId?: string;
   role: Types.ObjectId | string;
   isVerified: boolean;
+  isDeleted:boolean;
+  isActive:boolean;
 }
