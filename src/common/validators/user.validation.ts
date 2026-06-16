@@ -8,7 +8,7 @@ export const registerUserSchema = z.object({
         phone: z.string().min(10, "Phone number is required"),
         dateOfBirth: z.string().transform((str) => new Date(str)), // Coerce string to Date
         password: z.string().min(6, "Password must be at least 6 characters"),
-        role: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId"), // Assuming role is passed as an ObjectId string
+        //role: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId"), // Assuming role is passed as an ObjectId string
     })
 });
 
