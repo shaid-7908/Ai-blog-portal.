@@ -1,6 +1,6 @@
 import { asyncHandler } from "../common/utils/async.handler";
 import {Request,Response} from 'express'
-import { RegisterUserInput } from "../common/validators/user.validation";
+import { RegisterUserInput, PaginationQueryInputUser } from "../common/validators/user.validation";
 import { hashPassword } from "../common/utils/password.hasher";
 import { UserModel } from "../model/user.model";
 import { sendError, sendSuccess } from "../common/utils/unified.response";
@@ -53,5 +53,6 @@ export class UserController {
         ])
         return sendSuccess(res,"User Details",userDetails[0],200)
     })
+
 }
 

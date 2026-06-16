@@ -23,3 +23,15 @@ export const loginUserSchema = z.object({
 // You can extract the TypeScript type from the schema if you need it
 export type RegisterUserInput = z.infer<typeof registerUserSchema>['body'];
 export type LoginUserInput = z.infer<typeof loginUserSchema>['body'];
+
+export const paginationQuerySchemaUser = z.object({
+    query: z.object({
+        page: z.coerce.number().min(1, "Page must be at least 1").default(1),
+        limit: z.coerce.number().min(1, "Limit must be at least 1").max(100, "Limit cannot exceed 100").default(10),
+        serach:z.string().optional().nullable(),
+        role:z.string().optional().nullable(),
+        isActive:z.string().optional().nullable().transform(value => value?.toLowerCase() === 'true'),
+    })
+});
+
+export type PaginationQueryInputUser = z.infer<typeof paginationQuerySchemaUser>['query'];
