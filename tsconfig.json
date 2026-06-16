@@ -1,0 +1,13 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "rootDir": "./src" /* Specifies the root directory of input files. */,
+    "outDir": "./dist" /* Redirect output structure to the directory. */,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

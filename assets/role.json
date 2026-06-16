@@ -1,0 +1,19 @@
+[{
+    "roleDisplayName":"User",
+    "roleGroup":"frontend",
+    "isDeleted":false,
+    "isActive":true
+},
+{
+    "roleDisplayName":"admin",
+    "roleGroup":"backend",
+    "isDeleted":false,
+    "isActive":true
+},
+{
+    "roleDisplayName":"Editor",
+    "roleGroup":"backend",
+    "isDeleted":false,
+    "isActive":true
+}
+]
