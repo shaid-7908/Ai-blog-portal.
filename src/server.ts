@@ -4,6 +4,7 @@ import userRouter from './route/user.routes';
 import { connectDB } from './config/db.connection';
 import envConfig from './config/env.config';
 import { errorHandler } from './common/middlewares/errorhandler.middleware';
+import authRouter from './route/auth.routes';
 
 
 const app = express()
@@ -14,7 +15,8 @@ app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
 
 
-app.use('/user',userRouter)
+app.use('/api/v1/auth',authRouter)
+app.use('/api/v1/user',userRouter)
 
 
 

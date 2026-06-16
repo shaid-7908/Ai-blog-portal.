@@ -6,22 +6,51 @@ import { UserModel } from "../model/user.model";
 import { sendError, sendSuccess } from "../common/utils/unified.response";
 import { RoleModel } from "../model/role.model";
 import { RoleEnum } from "../common/enum/role.enum";
+import { Types } from "mongoose";
 
 export class UserController {
-    register = asyncHandler(async (req:Request,res:Response)=>{
-        const body = req.body as RegisterUserInput
-        const checkUserExists = await UserModel.findOne({email:body.email})
-        if(checkUserExists){
-            return sendError(res,"User Already Exists",null,400)
+    profileDetails = asyncHandler(async (req:Request,res:Response)=>{
+        if(!req.user){
+            return sendError(res,'Unauthenticated user',null,400)
         }
-        const hashedPassword = await hashPassword(body.password)
-        body.password = hashedPassword;
-        const role = await RoleModel.findOne({roleDisplayName:RoleEnum.USER})
-        if(!role){
-            return sendError(res,"Role Not Found",null,404)
-        }
-        const payload = {...body,role:role._id}
-        const newUser = await UserModel.create(payload)
-        return sendSuccess(res,"User Created Successfully",newUser,201)
+        const userDetails = await UserModel.aggregate([
+            {
+                $match:{
+                    _id:new Types.ObjectId(req.user.id)
+                }
+            },
+            {
+                $lookup:{
+                    from:'roles',
+                    localField:'role',
+                    foreignField:'_id',
+                    as:'role',
+                    pipeline:[
+                        {
+                            $project:{
+                                _id:1,
+                                roleDisplayName:1,
+                                roleGroup:1
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $unwind:'$role'
+            },
+            {
+                $project:{
+                    _id:1,
+                    email:1,
+                    firstName:1,
+                    lastName:1,
+                    phone:1,
+                    dateOfBirth:1,
+                    role:1
+                }
+            }
+        ])
+        return sendSuccess(res,"User Details",userDetails[0],200)
     })
 }
