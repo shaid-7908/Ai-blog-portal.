@@ -34,3 +34,16 @@ export const verifyAccessToken = asyncHandler(async (req:Request,res:Response,ne
     }
 
 })
+
+export const authorizeRoles = (...allowedRoles: string[]) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        if (!req.user) {
+            return sendError(res, "Unauthenticated", null, 401)
+        }
+        const userRole = req.user.role.roleDisplayName
+        if (!allowedRoles.includes(userRole)) {
+            return sendError(res, "Forbidden: You do not have permission to access this resource", null, 403)
+        }
+        next()
+    }
+}
