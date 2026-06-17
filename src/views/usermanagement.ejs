@@ -20,6 +20,9 @@
     <!-- Custom styles for this template-->
     <link href="/css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!-- Custom styles for this page -->
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
@@ -45,13 +48,51 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
+                    <h1 class="h3 mb-2 text-gray-800">User Management</h1>
+                    <p class="mb-4">Directory of all registered blog portal users, roles, and access settings.</p>
 
-                    
+                    <!-- User Directory Table Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Registered Users</h6>
+                            <div class="d-flex align-items-center">
+                                <label for="roleFilter" class="mr-2 mb-0 font-weight-bold text-gray-800 small">Filter by Role:</label>
+                                <select id="roleFilter" class="form-control form-control-sm" style="width: 150px;">
+                                    <option value="">All Roles</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="User">User</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover" id="usersTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Date of Birth</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Date of Birth</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -101,6 +142,92 @@
     </div>
 
    <%- include('components/commonscript') %>
+
+    <!-- Page level plugins -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script>
+        $(document).ready(function() {
+            const table = $('#usersTable').DataTable({
+                processing: true,
+                serverSide: true,
+                searching: true,
+                ajax: {
+                    url: '/api/v1/user-management/get-all',
+                    data: function(d) {
+                        // Map DataTables parameters to API expected parameters
+                        const page = Math.floor(d.start / d.length) + 1;
+                        const searchVal = d.search ? d.search.value : '';
+                        const roleVal = $('#roleFilter').val();
+                        
+                        return {
+                            page: page,
+                            limit: d.length,
+                            serach: searchVal, // Match schema validation spelling "serach"
+                            role: roleVal
+                        };
+                    },
+                    dataSrc: function(json) {
+                        if (json && json.data) {
+                            json.recordsTotal = json.data.meta.totalDocs;
+                            json.recordsFiltered = json.data.meta.totalDocs;
+                            return json.data.docs;
+                        }
+                        return [];
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.error('DataTables Error:', error, thrown);
+                        alert('Failed to load user list. Please ensure you are logged in and have administrator permissions.');
+                    }
+                },
+                columns: [
+                    { data: 'firstName', defaultContent: '-' },
+                    { data: 'lastName', defaultContent: '-' },
+                    { data: 'email', defaultContent: '-' },
+                    { data: 'phone', defaultContent: '-' },
+                    { 
+                        data: 'dateOfBirth',
+                        defaultContent: '-',
+                        render: function(data) {
+                            if (!data) return '-';
+                            try {
+                                const date = new Date(data);
+                                return date.toLocaleDateString();
+                            } catch(e) {
+                                return data;
+                            }
+                        }
+                    },
+                    { 
+                        data: 'role.roleDisplayName',
+                        defaultContent: 'USER',
+                        render: function(data) {
+                            const role = data || 'USER';
+                            let badgeClass = 'badge-secondary';
+                            if (role.toUpperCase() === 'ADMIN') {
+                                badgeClass = 'badge-danger';
+                            } else if (role.toUpperCase() === 'USER') {
+                                badgeClass = 'badge-primary';
+                            }
+                            return `<span class="badge ${badgeClass} text-uppercase font-weight-bold px-2 py-1">${role}</span>`;
+                        }
+                    }
+                ],
+                language: {
+                    search: "Filter by Search Term:",
+                    zeroRecords: "No matching users found",
+                    loadingRecords: "Loading user directory..."
+                }
+            });
+
+            // Redraw table when the role filter select is changed
+            $('#roleFilter').on('change', function() {
+                table.draw();
+            });
+        });
+    </script>
 
 </body>
 

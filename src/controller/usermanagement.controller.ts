@@ -2,7 +2,7 @@ import { asyncHandler } from "../common/utils/async.handler";
 import { Request, Response } from "express";
 import { PaginationQueryInputUser } from "../common/validators/user.validation";
 import { UserModel } from "../model/user.model";
-import FilterQuery, { PipelineStage } from "mongoose";
+import mongoose, { PipelineStage } from "mongoose";
 import { sendError, sendSuccess } from "../common/utils/unified.response";
 import { RoleModel } from "../model/role.model";
 
@@ -28,6 +28,8 @@ export class UserManagementController {
             const roleId = allRoles.find(r=>r.roleDisplayName.toLowerCase() === query.role?.toLowerCase())
             if(roleId){
                 and_clause.push({ "role": roleId._id })
+            } else {
+                and_clause.push({ "role": new mongoose.Types.ObjectId() })
             }
         }
         const condition = { $and: and_clause };
@@ -74,7 +76,7 @@ export class UserManagementController {
         ]
         const [countResult, docs] = await Promise.all([
             UserModel.aggregate(countPipeline),
-            UserModel.aggregate([...filterPipeline, { $sort: { createdAt: 1 } }])
+            UserModel.aggregate([...filterPipeline, { $sort: { createdAt: 1 } }, { $skip: skip }, { $limit: limit }])
         ])
         const totalDocs = countResult.length ? countResult[0].total : 0;
         const remainingDocs = totalDocs - (skip + docs.length);
