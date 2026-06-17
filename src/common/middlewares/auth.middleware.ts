@@ -47,3 +47,44 @@ export const authorizeRoles = (...allowedRoles: string[]) => {
         next()
     }
 }
+
+export const verifyAccessTokenEJS = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const accessToken = req.cookies?.accessToken;
+
+    if (!accessToken) {
+        return res.redirect('/login');
+    }
+    try {
+        const decodeToken = jwt.verify(accessToken, envConfig.JWT_SECRET) as JwtPayload;
+
+        const checkUser = await UserModel.findById(decodeToken.id);
+        if (!checkUser) {
+            res.clearCookie('accessToken');
+            res.clearCookie('refreshToken');
+            return res.redirect('/login');
+        }
+        req.user = decodeToken;
+        res.locals.user = checkUser;
+        next();
+    } catch (error) {
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
+        return res.redirect('/login');
+    }
+});
+
+export const redirectIfLoggedIn = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const accessToken = req.cookies?.accessToken;
+    if (accessToken) {
+        try {
+            const decodeToken = jwt.verify(accessToken, envConfig.JWT_SECRET) as JwtPayload;
+            const checkUser = await UserModel.findById(decodeToken.id);
+            if (checkUser) {
+                return res.redirect('/dashboard');
+            }
+        } catch (error) {
+            // Token is invalid/expired, let them view the page (or clear cookies)
+        }
+    }
+    next();
+});
