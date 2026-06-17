@@ -1,4 +1,6 @@
-import express,{Request,Response} from 'express';
+import express, { Request, Response } from 'express';
+import path from 'path';
+
 import cookieParser from 'cookie-parser'
 import userRouter from './route/user.routes';
 import { connectDB } from './config/db.connection';
@@ -7,6 +9,7 @@ import { errorHandler } from './common/middlewares/errorhandler.middleware';
 import authRouter from './route/auth.routes';
 import userManagentRouter from './route/usermanagement.routes';
 import blogCategoryRouter from './route/blogcategory.routes';
+import blogRouter from './route/blog.routes';
 
 
 
@@ -17,11 +20,24 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
 
+// EJS Configuration
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Static files configuration (for SB Admin CSS, JS, etc.)
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Example route to serve the SB Admin Dashboard
+app.get('/admin/dashboard', (req, res) => {
+    res.render('index');
+});
+
 
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1/user-management',userManagentRouter)
 app.use('/api/v1/blog-category',blogCategoryRouter)
+app.use('/api/v1/blog',blogRouter)
 
 
 
