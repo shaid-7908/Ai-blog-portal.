@@ -30,4 +30,10 @@ ejsRouter.get("/user-management", verifyAccessTokenEJS, authorizeRoles(RoleEnum.
 //Blog category routes
 ejsRouter.get("/blog-category-management",verifyAccessTokenEJS,authorizeRoles(RoleEnum.ADMIN),ejsController.blogCategoryList)
 
+//Blog Management Routes
+ejsRouter.get("/blog-management",            verifyAccessTokenEJS, authorizeRoles(RoleEnum.ADMIN, RoleEnum.USER), ejsController.blogList)
+ejsRouter.get("/blog-management/create",     verifyAccessTokenEJS, authorizeRoles(RoleEnum.ADMIN, RoleEnum.USER), ejsController.blogCreate)
+ejsRouter.get("/blog-management/view/:id",   verifyAccessTokenEJS, authorizeRoles(RoleEnum.ADMIN, RoleEnum.USER), ejsController.blogView)
+ejsRouter.get("/blog-management/edit/:id",   verifyAccessTokenEJS, authorizeRoles(RoleEnum.ADMIN),               ejsController.blogEdit)
+
 export default ejsRouter

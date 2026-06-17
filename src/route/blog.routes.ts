@@ -56,4 +56,13 @@ blogRouter.delete(
     blogController.deleteBlog
 );
 
+// Get a blog by MongoDB _id (Admin only - for admin view/edit pages)
+blogRouter.get(
+    '/get-by-id/:id',
+    verifyAccessToken,
+    authorizeRoles(RoleEnum.ADMIN, RoleEnum.USER),
+    validate(idParamSchema),
+    blogController.getBlogById
+);
+
 export default blogRouter;

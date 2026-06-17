@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Blog Management">
+    <title>SB Admin 2 - <%= pageTitle %></title>
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+        .badge-draft          { background:#858796; color:#fff; }
+        .badge-published      { background:#1cc88a; color:#fff; }
+        .badge-archived       { background:#36b9cc; color:#fff; }
+        .badge-pending-review { background:#f6c23e; color:#333; }
+        .badge-rejected       { background:#e74a3b; color:#fff; }
+        .feature-thumb { width:48px; height:36px; object-fit:cover; border-radius:4px; }
+        .action-btns .btn { padding:.2rem .5rem; font-size:.78rem; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <%- include('components/sidebar') %>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <%- include('components/topbar') %>
+            <div class="container-fluid">
+
+                <!-- Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">Blog Management</h1>
+                        <p class="mb-0 text-gray-600 small">View, create, edit and delete blog posts.</p>
+                    </div>
+                    <a href="/blog-management/create" class="btn btn-primary btn-sm shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50 mr-1"></i> New Blog Post
+                    </a>
+                </div>
+
+                <!-- Alert -->
+                <div id="alertContainer"></div>
+
+                <!-- Table Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <h6 class="m-0 font-weight-bold text-primary">All Blog Posts</h6>
+                        <div class="d-flex align-items-center">
+                            <label for="statusFilter" class="mr-2 mb-0 font-weight-bold text-gray-800 small">Status:</label>
+                            <select id="statusFilter" class="form-control form-control-sm" style="width:160px;">
+                               
+                                <option value="Draft">Draft</option>
+                                <option value="Published">Published</option>
+                                <option value="Pending Review">Pending Review</option>
+                                <option value="Archived">Archived</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover" id="blogsTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Image</th>
+                                        <th>Title</th>
+                                        <th>Status</th>
+                                        <th>Categories</th>
+                                        <th>Author</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Confirm Modal -->
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title"><i class="fas fa-trash mr-2"></i>Delete Blog</h5>
+                                <button class="close text-white" type="button" data-dismiss="modal"><span>&times;</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete <strong id="deleteBlogTitle"></strong>?</p>
+                                <p class="text-muted small mb-0">This action is irreversible.</p>
+                                <input type="hidden" id="deleteBlogId">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                                    <span id="deleteBtnText"><i class="fas fa-trash mr-1"></i>Yes, Delete</span>
+                                    <span id="deleteBtnSpinner" class="d-none"><i class="fas fa-spinner fa-spin mr-1"></i>Deleting...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /.container-fluid -->
+        </div>
+
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto"><span>Copyright &copy; Your Website 2021</span></div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
+<!-- Logout Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('components/commonscript') %>
+<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>
+$(document).ready(function () {
+
+    function statusBadge(status) {
+        const map = {
+            'Draft':          'badge-draft',
+            'Published':      'badge-published',
+            'Archived':       'badge-archived',
+            'Pending Review': 'badge-pending-review',
+            'Rejected':       'badge-rejected',
+        };
+        const cls = map[status] || 'badge-secondary';
+        return `<span class="badge ${cls} px-2 py-1">${status || '—'}</span>`;
+    }
+
+    function showAlert(msg, type) {
+        $('#alertContainer').html(`<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${msg}<button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+        </div>`);
+    }
+
+    const table = $('#blogsTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '/api/v1/blog/get-all',
+            data: function (d) {
+                return {
+                    page:   Math.floor(d.start / d.length) + 1,
+                    limit:  d.length,
+                    search: d.search ? d.search.value : '',
+                    status: $('#statusFilter').val()
+                };
+            },
+            dataSrc: function (json) {
+                if (json && json.data) {
+                    json.recordsTotal    = json.data.meta.totalDocs;
+                    json.recordsFiltered = json.data.meta.totalDocs;
+                    return json.data.docs;
+                }
+                return [];
+            },
+            error: function (err) { console.log(err) ;showAlert('Failed to load blogs. Please refresh.', 'danger'); }
+        },
+        columns: [
+            { data: null, orderable: false,
+              render: (d, t, r, m) => m.row + 1 + m.settings._iDisplayStart },
+            { data: 'featureImage', orderable: false,
+              render: (d) => d
+                ? `<img src="${d}" alt="thumb" class="feature-thumb">`
+                : `<div class="feature-thumb bg-gray-200 d-flex align-items-center justify-content-center rounded"><i class="fas fa-image text-gray-400"></i></div>` },
+            { data: 'title', defaultContent: '—',
+              render: (d, t, r) => `<a href="/blog-management/view/${r._id}" class="font-weight-bold text-primary text-decoration-none">${d}</a><br><small class="text-muted"><code>${r.slug || ''}</code></small>` },
+            { data: 'status', render: statusBadge },
+            { data: 'categories', defaultContent: '—',
+              render: (cats) => {
+                if (!cats || !cats.length) return '<span class="text-muted">—</span>';
+                return cats.map(c => `<span class="badge badge-info px-1">${c.name}</span>`).join(' ');
+              }
+            },
+            { data: 'author', defaultContent: '—',
+              render: (a) => a ? `${a.firstName} ${a.lastName}` : '—' },
+            { data: 'createdAt', render: (d) => d ? new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '—' },
+            { data: null, orderable: false,
+              render: (d, t, r) =>
+                `<div class="action-btns d-flex" style="gap:4px">
+                    <a href="/blog-management/view/${r._id}" class="btn btn-info btn-sm" title="View"><i class="fas fa-eye"></i></a>
+                    <a href="/blog-management/edit/${r._id}" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
+                    <button class="btn btn-danger btn-sm btn-delete" data-id="${r._id}" data-title="${r.title.replace(/"/g,'&quot;')}" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>`
+            }
+        ],
+        language: {
+            search: 'Search blogs:',
+            zeroRecords: 'No blogs found.',
+            processing: '<div class="text-center py-3"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>'
+        }
+    });
+
+    $('#statusFilter').on('change', () => table.draw());
+
+    // Delete flow
+    $('#blogsTable').on('click', '.btn-delete', function () {
+        $('#deleteBlogId').val($(this).data('id'));
+        $('#deleteBlogTitle').text($(this).data('title'));
+        $('#deleteModal').modal('show');
+    });
+
+    $('#confirmDeleteBtn').on('click', function () {
+        const id    = $('#deleteBlogId').val();
+        const title = $('#deleteBlogTitle').text();
+        $('#deleteBtnText').addClass('d-none');
+        $('#deleteBtnSpinner').removeClass('d-none');
+
+        $.ajax({
+            url: `/api/v1/blog/delete/${id}`,
+            method: 'DELETE',
+            success: (res) => {
+                $('#deleteModal').modal('hide');
+                showAlert(`Blog "<strong>${title}</strong>" deleted successfully.`, 'success');
+                table.draw();
+            },
+            error: (xhr) => {
+                $('#deleteModal').modal('hide');
+                const msg = xhr.responseJSON ? xhr.responseJSON.message : 'Delete failed.';
+                showAlert(msg, 'danger');
+            },
+            complete: () => {
+                $('#deleteBtnText').removeClass('d-none');
+                $('#deleteBtnSpinner').addClass('d-none');
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>

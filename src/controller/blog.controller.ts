@@ -70,6 +70,7 @@ export class BlogController {
 
     getPaginatedBlogs = asyncHandler(async (req: Request, res: Response) => {
         const query = req.query as unknown as PaginationQueryInputBlog;
+        console.log(query)
         const page = query.page || 1;
         const limit = query.limit || 10;
         const skip = (page - 1) * limit;
@@ -149,6 +150,7 @@ export class BlogController {
             },
             docs,
         };
+        console.log(result);
 
         return sendSuccess(res, "Blogs fetched successfully", result, 200);
     });
@@ -231,5 +233,18 @@ export class BlogController {
         await blog.save();
 
         return sendSuccess(res, "Blog deleted successfully", null, 200);
+    });
+
+    getBlogById = asyncHandler(async (req: Request, res: Response) => {
+        const id = req.params.id;
+        const blog = await BlogModel
+            .findOne({ _id: id, isDeleted: false })
+            .populate('postedBy', 'firstName lastName email');
+
+        if (!blog) {
+            return sendError(res, "Blog not found", null, 404);
+        }
+
+        return sendSuccess(res, "Blog fetched successfully", blog, 200);
     });
 }
