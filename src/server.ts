@@ -6,6 +6,7 @@ import envConfig from './config/env.config';
 import { errorHandler } from './common/middlewares/errorhandler.middleware';
 import authRouter from './route/auth.routes';
 import userManagentRouter from './route/usermanagement.routes';
+import blogCategoryRouter from './route/blogcategory.routes';
 
 
 const app = express()
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1/user-management',userManagentRouter)
+app.use('/api/v1/blog-category',blogCategoryRouter)
 
 
 

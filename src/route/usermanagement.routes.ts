@@ -11,6 +11,6 @@ const userManagementController = new UserManagementController()
 
 
 userManagentRouter.get('/get-all',validate(paginationQuerySchemaUser),verifyAccessToken,authorizeRoles(RoleEnum.ADMIN),userManagementController.getPaginatedUsers)
-
+userManagentRouter.get('/user-details/:id',verifyAccessToken,authorizeRoles(RoleEnum.ADMIN),userManagementController.getDetailsUser)
 
 export default userManagentRouter

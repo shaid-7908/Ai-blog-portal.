@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { PaginationQueryInputUser } from "../common/validators/user.validation";
 import { UserModel } from "../model/user.model";
 import FilterQuery, { PipelineStage } from "mongoose";
-import { sendSuccess } from "../common/utils/unified.response";
+import { sendError, sendSuccess } from "../common/utils/unified.response";
 import { RoleModel } from "../model/role.model";
 
 export class UserManagementController {
@@ -94,5 +94,15 @@ export class UserManagementController {
             docs,
         }
         return sendSuccess(res, "Users fetched successfully", result, 200);
+    })
+
+    getDetailsUser = asyncHandler(async (req:Request,res:Response)=>{
+        const id = req.params.id
+        
+        const user = await UserModel.findById(id).select('-password')
+        if(!user){
+            return sendError(res,"User Not Found",null,404)
+        }
+        return sendSuccess(res,"User fetched successfully",user,200)
     })
 }
