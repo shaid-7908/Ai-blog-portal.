@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Blog Category Management">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - <%= pageTitle %></title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <style>
+        .badge-active   { background-color: #1cc88a; color: #fff; }
+        .badge-inactive { background-color: #e74a3b; color: #fff; }
+        .action-btns .btn { padding: 0.2rem 0.55rem; font-size: 0.78rem; }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <%- include('components/sidebar') %>
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+
+                <%- include('components/topbar') %>
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h1 class="h3 mb-0 text-gray-800">Category Management</h1>
+                            <p class="mb-0 text-gray-600 small">Manage all blog categories - create, edit, view and delete.</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm shadow-sm" id="btnOpenCreate">
+                            <i class="fas fa-plus fa-sm text-white-50 mr-1"></i> New Category
+                        </button>
+                    </div>
+
+                    <!-- Alert Container -->
+                    <div id="alertContainer"></div>
+
+                    <!-- Categories Table Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Blog Categories</h6>
+                            <div class="d-flex align-items-center">
+                                <label for="statusFilter" class="mr-2 mb-0 font-weight-bold text-gray-800 small">Status:</label>
+                                <select id="statusFilter" class="form-control form-control-sm" style="width:130px;">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover" id="categoriesTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Slug</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Created At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2021</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top -->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- ========== LOGOUT MODAL ========== -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== CREATE MODAL ========== -->
+    <div class="modal fade" id="createCategoryModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="createModalLabel"><i class="fas fa-plus-circle mr-2"></i>Create New Category</h5>
+                    <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="createCategoryForm">
+                    <div class="modal-body">
+                        <div id="createAlertContainer"></div>
+                        <div class="form-group">
+                            <label for="createName" class="font-weight-bold">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createName" name="name" placeholder="e.g. Technology" minlength="2" required>
+                            <small class="form-text text-muted">Minimum 2 characters. A URL slug will be generated automatically.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="createDescription" class="font-weight-bold">Description</label>
+                            <textarea class="form-control" id="createDescription" name="description" rows="3" placeholder="Short description of this category..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="createSubmitBtn">
+                            <span id="createBtnText"><i class="fas fa-save mr-1"></i>Create Category</span>
+                            <span id="createBtnSpinner" class="d-none"><i class="fas fa-spinner fa-spin mr-1"></i>Saving...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== VIEW MODAL ========== -->
+    <div class="modal fade" id="viewCategoryModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="viewModalLabel"><i class="fas fa-eye mr-2"></i>Category Details</h5>
+                    <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="font-weight-bold text-gray-700 small text-uppercase">Name</label>
+                                <p id="viewName" class="mb-0 font-weight-bold text-gray-900">—</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="font-weight-bold text-gray-700 small text-uppercase">Slug</label>
+                                <p id="viewSlug" class="mb-0"><code>—</code></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="font-weight-bold text-gray-700 small text-uppercase">Status</label>
+                                <p id="viewStatus" class="mb-0">—</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="font-weight-bold text-gray-700 small text-uppercase">Created At</label>
+                                <p id="viewCreatedAt" class="mb-0">—</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="font-weight-bold text-gray-700 small text-uppercase">Updated At</label>
+                                <p id="viewUpdatedAt" class="mb-0">—</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="font-weight-bold text-gray-700 small text-uppercase">Description</label>
+                                <p id="viewDescription" class="mb-0 text-gray-800">—</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-warning" id="viewToEditBtn"><i class="fas fa-edit mr-1"></i>Edit This Category</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== EDIT MODAL ========== -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="editModalLabel"><i class="fas fa-edit mr-2"></i>Edit Category</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editCategoryForm">
+                    <input type="hidden" id="editCategoryId">
+                    <div class="modal-body">
+                        <div id="editAlertContainer"></div>
+                        <div class="form-group">
+                            <label for="editName" class="font-weight-bold">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editName" name="name" placeholder="e.g. Technology" minlength="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDescription" class="font-weight-bold">Description</label>
+                            <textarea class="form-control" id="editDescription" name="description" rows="3" placeholder="Short description of this category..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-bold">Status</label>
+                            <div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="editStatusActive" name="isActive" class="custom-control-input" value="true">
+                                    <label class="custom-control-label text-success font-weight-bold" for="editStatusActive">Active</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="editStatusInactive" name="isActive" class="custom-control-input" value="false">
+                                    <label class="custom-control-label text-danger font-weight-bold" for="editStatusInactive">Inactive</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning" id="editSubmitBtn">
+                            <span id="editBtnText"><i class="fas fa-save mr-1"></i>Save Changes</span>
+                            <span id="editBtnSpinner" class="d-none"><i class="fas fa-spinner fa-spin mr-1"></i>Saving...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== DELETE CONFIRM MODAL ========== -->
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel"><i class="fas fa-trash mr-2"></i>Delete Category</h5>
+                    <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the category <strong id="deleteCategoryName"></strong>?</p>
+                    <p class="text-muted small mb-0">This action is irreversible. The category will be marked as deleted and deactivated.</p>
+                    <input type="hidden" id="deleteCategoryId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <span id="deleteBtnText"><i class="fas fa-trash mr-1"></i>Yes, Delete</span>
+                        <span id="deleteBtnSpinner" class="d-none"><i class="fas fa-spinner fa-spin mr-1"></i>Deleting...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/commonscript') %>
+
+    <!-- DataTables JS -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+
+        // ── Helpers ──────────────────────────────────────────────────────────
+        function showAlert(containerId, message, type) {
+            const html = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            </div>`;
+            $('#' + containerId).html(html);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function statusBadge(isActive) {
+            return isActive
+                ? '<span class="badge badge-active px-2 py-1">Active</span>'
+                : '<span class="badge badge-inactive px-2 py-1">Inactive</span>';
+        }
+
+        // ── DataTable Initialization ──────────────────────────────────────────
+        const table = $('#categoriesTable').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: true,
+            ajax: {
+                url: '/api/v1/blog-category/get-all',
+                data: function (d) {
+                    const page   = Math.floor(d.start / d.length) + 1;
+                    const search = d.search ? d.search.value : '';
+                    const status = $('#statusFilter').val();
+                    return {
+                        page:     page,
+                        limit:    d.length,
+                        search:   search,
+                        isActive: status
+                    };
+                },
+                dataSrc: function (json) {
+                    if (json && json.data) {
+                        json.recordsTotal    = json.data.meta.totalDocs;
+                        json.recordsFiltered = json.data.meta.totalDocs;
+                        return json.data.docs;
+                    }
+                    return [];
+                },
+                error: function (xhr) {
+                    console.error('DataTable error', xhr);
+                    showAlert('alertContainer', 'Failed to load categories. Please refresh the page.', 'danger');
+                }
+            },
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1 + meta.settings._iDisplayStart;
+                    },
+                    orderable: false
+                },
+                { data: 'name', defaultContent: '—' },
+                {
+                    data: 'slug', defaultContent: '—',
+                    render: function (data) {
+                        return data ? `<code class="text-primary">${data}</code>` : '—';
+                    }
+                },
+                {
+                    data: 'description', defaultContent: '—',
+                    render: function (data) {
+                        if (!data) return '<span class="text-muted">—</span>';
+                        return data.length > 60 ? data.substring(0, 60) + '…' : data;
+                    }
+                },
+                {
+                    data: 'isActive',
+                    render: function (data) { return statusBadge(data); }
+                },
+                {
+                    data: 'createdAt',
+                    render: function (data) { return formatDate(data); }
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `<div class="action-btns d-flex gap-1" style="gap:4px">
+                            <button class="btn btn-info btn-sm btn-view" data-id="${row._id}" title="View"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-warning btn-sm btn-edit" data-id="${row._id}" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm btn-delete" data-id="${row._id}" data-name="${row.name}" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>`;
+                    }
+                }
+            ],
+            language: {
+                search:          'Search categories:',
+                zeroRecords:     'No matching categories found.',
+                loadingRecords:  'Loading categories...',
+                processing:      '<div class="text-center py-3"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>'
+            }
+        });
+
+        // Redraw on status filter change
+        $('#statusFilter').on('change', function () { table.draw(); });
+
+        // ── Open Create Modal ─────────────────────────────────────────────────
+        $('#btnOpenCreate').on('click', function () {
+            $('#createCategoryForm')[0].reset();
+            $('#createAlertContainer').html('');
+            $('#createBtnText').removeClass('d-none');
+            $('#createBtnSpinner').addClass('d-none');
+            $('#createCategoryModal').modal('show');
+        });
+
+        // ── Create Category ───────────────────────────────────────────────────
+        $('#createCategoryForm').on('submit', function (e) {
+            e.preventDefault();
+            const name        = $('#createName').val().trim();
+            const description = $('#createDescription').val().trim();
+
+            if (!name) { showAlert('createAlertContainer', 'Category name is required.', 'danger'); return; }
+
+            $('#createBtnText').addClass('d-none');
+            $('#createBtnSpinner').removeClass('d-none');
+
+            $.ajax({
+                url:         '/api/v1/blog-category/create',
+                method:      'POST',
+                contentType: 'application/json',
+                data:        JSON.stringify({ name, description }),
+                success: function (res) {
+                    if (res.success) {
+                        $('#createCategoryModal').modal('hide');
+                        showAlert('alertContainer', `Category "<strong>${name}</strong>" created successfully!`, 'success');
+                        table.draw();
+                    } else {
+                        showAlert('createAlertContainer', res.message || 'Failed to create category.', 'danger');
+                    }
+                },
+                error: function (xhr) {
+                    const msg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred.';
+                    showAlert('createAlertContainer', msg, 'danger');
+                },
+                complete: function () {
+                    $('#createBtnText').removeClass('d-none');
+                    $('#createBtnSpinner').addClass('d-none');
+                }
+            });
+        });
+
+        // ── View Category ─────────────────────────────────────────────────────
+        let currentViewId = null;
+
+        $('#categoriesTable').on('click', '.btn-view', function () {
+            const id = $(this).data('id');
+            currentViewId = id;
+            $('#viewName').text('Loading…');
+            $('#viewCategoryModal').modal('show');
+
+            $.ajax({
+                url: `/api/v1/blog-category/get/${id}`,
+                method: 'GET',
+                success: function (res) {
+                    if (res.success && res.data) {
+                        const c = res.data;
+                        $('#viewName').text(c.name || '—');
+                        $('#viewSlug').html(c.slug ? `<code>${c.slug}</code>` : '—');
+                        $('#viewDescription').text(c.description || 'No description provided.');
+                        $('#viewStatus').html(statusBadge(c.isActive));
+                        $('#viewCreatedAt').text(formatDate(c.createdAt));
+                        $('#viewUpdatedAt').text(formatDate(c.updatedAt));
+                    }
+                },
+                error: function () {
+                    $('#viewName').text('Failed to load category.');
+                }
+            });
+        });
+
+        // Switch from View → Edit
+        $('#viewToEditBtn').on('click', function () {
+            if (currentViewId) {
+                $('#viewCategoryModal').modal('hide');
+                openEditModal(currentViewId);
+            }
+        });
+
+        // ── Edit Category ─────────────────────────────────────────────────────
+        function openEditModal(id) {
+            $('#editAlertContainer').html('');
+            $('#editBtnText').removeClass('d-none');
+            $('#editBtnSpinner').addClass('d-none');
+            $('#editCategoryId').val(id);
+
+            $.ajax({
+                url: `/api/v1/blog-category/get/${id}`,
+                method: 'GET',
+                success: function (res) {
+                    if (res.success && res.data) {
+                        const c = res.data;
+                        $('#editName').val(c.name || '');
+                        $('#editDescription').val(c.description || '');
+                        $(`input[name="isActive"][value="${c.isActive}"]`).prop('checked', true);
+                        $('#editCategoryModal').modal('show');
+                    }
+                },
+                error: function () {
+                    showAlert('alertContainer', 'Failed to load category for editing.', 'danger');
+                }
+            });
+        }
+
+        $('#categoriesTable').on('click', '.btn-edit', function () {
+            openEditModal($(this).data('id'));
+        });
+
+        // Submit Edit
+        $('#editCategoryForm').on('submit', function (e) {
+            e.preventDefault();
+            const id          = $('#editCategoryId').val();
+            const name        = $('#editName').val().trim();
+            const description = $('#editDescription').val().trim();
+            const isActiveVal = $('input[name="isActive"]:checked').val();
+            const isActive    = isActiveVal === 'true' ? true : isActiveVal === 'false' ? false : undefined;
+
+            if (!name) { showAlert('editAlertContainer', 'Category name is required.', 'danger'); return; }
+
+            $('#editBtnText').addClass('d-none');
+            $('#editBtnSpinner').removeClass('d-none');
+
+            const payload = { name, description };
+            if (isActive !== undefined) payload.isActive = isActive;
+
+            $.ajax({
+                url:         `/api/v1/blog-category/update/${id}`,
+                method:      'PUT',
+                contentType: 'application/json',
+                data:        JSON.stringify(payload),
+                success: function (res) {
+                    if (res.success) {
+                        $('#editCategoryModal').modal('hide');
+                        showAlert('alertContainer', `Category "<strong>${name}</strong>" updated successfully!`, 'success');
+                        table.draw();
+                    } else {
+                        showAlert('editAlertContainer', res.message || 'Failed to update category.', 'danger');
+                    }
+                },
+                error: function (xhr) {
+                    const msg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred.';
+                    showAlert('editAlertContainer', msg, 'danger');
+                },
+                complete: function () {
+                    $('#editBtnText').removeClass('d-none');
+                    $('#editBtnSpinner').addClass('d-none');
+                }
+            });
+        });
+
+        // ── Delete Category ───────────────────────────────────────────────────
+        $('#categoriesTable').on('click', '.btn-delete', function () {
+            const id   = $(this).data('id');
+            const name = $(this).data('name');
+            $('#deleteCategoryId').val(id);
+            $('#deleteCategoryName').text(name);
+            $('#deleteBtnText').removeClass('d-none');
+            $('#deleteBtnSpinner').addClass('d-none');
+            $('#deleteCategoryModal').modal('show');
+        });
+
+        $('#confirmDeleteBtn').on('click', function () {
+            const id   = $('#deleteCategoryId').val();
+            const name = $('#deleteCategoryName').text();
+
+            $('#deleteBtnText').addClass('d-none');
+            $('#deleteBtnSpinner').removeClass('d-none');
+
+            $.ajax({
+                url:    `/api/v1/blog-category/delete/${id}`,
+                method: 'DELETE',
+                success: function (res) {
+                    if (res.success) {
+                        $('#deleteCategoryModal').modal('hide');
+                        showAlert('alertContainer', `Category "<strong>${name}</strong>" deleted successfully.`, 'success');
+                        table.draw();
+                    } else {
+                        $('#deleteCategoryModal').modal('hide');
+                        showAlert('alertContainer', res.message || 'Failed to delete category.', 'danger');
+                    }
+                },
+                error: function (xhr) {
+                    const msg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred.';
+                    $('#deleteCategoryModal').modal('hide');
+                    showAlert('alertContainer', msg, 'danger');
+                }
+            });
+        });
+
+    }); // end document ready
+    </script>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import { asyncHandler } from "../common/utils/async.handler";
 import { Response,Request } from "express";
 
 export class EjsController {
+    //User management 
     userManageMent = asyncHandler(async (req:Request,res:Response)=>{
          const user = req.user as JwtPayload
 
@@ -13,4 +14,14 @@ export class EjsController {
          })
 
     })
+
+    //Blog category
+    blogCategoryList = asyncHandler(async (req:Request,res:Response)=>{
+        const user = req.user as JwtPayload
+        res.render('blog-category-list',{
+            pageTitle:'Blog Category Management',
+            email:user.email
+        })
+    })
+
 }

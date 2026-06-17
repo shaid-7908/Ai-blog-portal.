@@ -23,7 +23,11 @@ ejsRouter.get('/logout', (req, res) => {
     res.clearCookie('refreshToken');
     res.redirect('/login');
 });
-
+//User Management Routes 
 ejsRouter.get("/user-management", verifyAccessTokenEJS, authorizeRoles(RoleEnum.ADMIN), ejsController.userManageMent)
+
+
+//Blog category routes
+ejsRouter.get("/blog-category-management",verifyAccessTokenEJS,authorizeRoles(RoleEnum.ADMIN),ejsController.blogCategoryList)
 
 export default ejsRouter
