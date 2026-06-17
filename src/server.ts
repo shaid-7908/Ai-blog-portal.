@@ -10,6 +10,7 @@ import authRouter from './route/auth.routes';
 import userManagentRouter from './route/usermanagement.routes';
 import blogCategoryRouter from './route/blogcategory.routes';
 import blogRouter from './route/blog.routes';
+import ejsRouter from './route/ejs.routes';
 
 
 
@@ -27,12 +28,9 @@ app.set('views', path.join(__dirname, 'views'));
 // Static files configuration (for SB Admin CSS, JS, etc.)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Example route to serve the SB Admin Dashboard
-app.get('/admin/dashboard', (req, res) => {
-    res.render('index');
-});
 
 
+app.use('',ejsRouter)
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1/user-management',userManagentRouter)
