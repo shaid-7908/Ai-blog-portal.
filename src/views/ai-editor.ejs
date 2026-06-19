@@ -468,8 +468,8 @@
                                                 <i class="fas fa-sitemap mr-2 text-primary" style="font-size:0.85rem;"></i>Structure &amp; Outline
                                             </h6>
                                             <div class="d-flex" style="gap: 6px;">
-                                                <button type="button" id="btn-regenerate" disabled
-                                                    style="display:inline-flex; align-items:center; gap:5px; padding:0.38rem 0.85rem; font-size:0.78rem; font-weight:600; border-radius:5px; border:1px solid #d1d3e2; background:#fff; color:#5a5c69; cursor:not-allowed; opacity:0.6; transition:all 0.18s;">
+                                                <button type="button" id="btn-regenerate"
+                                                    style="display:inline-flex; align-items:center; gap:5px; padding:0.38rem 0.85rem; font-size:0.78rem; font-weight:600; border-radius:5px; border:1px solid #d1d3e2; background:#fff; color:#5a5c69; cursor:pointer; transition:all 0.18s;">
                                                     <i class="fas fa-redo-alt" style="font-size:0.72rem;"></i> Regenerate
                                                 </button>
                                                 <button type="button" id="btn-save" disabled
@@ -501,6 +501,13 @@
 
                                                 <!-- Idea List -->
                                                 <div id="idea-list" class="d-none"></div>
+
+                                                <!-- Error Banner -->
+                                                <div id="idea-error-banner" class="d-none" style="background:#fff5f5; border:1px solid #f5c6c6; border-radius:6px; padding:0.75rem 1rem; text-align:center;">
+                                                    <i class="fas fa-exclamation-circle" style="color:#e74a3b; margin-bottom:6px; font-size:1.4rem;"></i>
+                                                    <p id="idea-error-msg" class="mb-1" style="font-size:0.8rem; color:#c0392b; font-weight:600;"></p>
+                                                    <p class="mb-0" style="font-size:0.75rem; color:#888;">Click <strong>Regenerate</strong> to try again.</p>
+                                                </div>
 
                                             </div>
 
@@ -749,17 +756,41 @@
 
                 // ── Blog Idea Generation & Outline Rendering ──
                 let generatedIdeas = [];
+                let currentSessionId = null;
+                let currentConfig = null;
+                let activeIdeaIndex = null;
 
-                $('#aiConfigForm').on('submit', function (e) {
-                    e.preventDefault();
-                    const formData = $(this).serialize();
+                function getFormConfigObj() {
+                    const arrayData = $('#aiConfigForm').serializeArray();
+                    const configObj = { categories: [], keywords: [] };
+                    
+                    arrayData.forEach(item => {
+                        if (item.name === 'categories') {
+                            configObj.categories.push(item.value);
+                        } else if (item.name === 'keywords') {
+                            configObj.keywords.push(item.value);
+                        } else {
+                            configObj[item.name] = item.value;
+                        }
+                    });
+                    return configObj;
+                }
+
+                function triggerGeneration() {
+                    const formData = $('#aiConfigForm').serialize();
+                    currentConfig = getFormConfigObj();
 
                     // Show spinner, hide placeholders and old results
                     $('#idea-placeholder').addClass('d-none');
                     $('#idea-list').addClass('d-none').empty();
+                    $('#idea-error-banner').addClass('d-none');
                     $('#idea-spinner').removeClass('d-none').css('display', 'flex');
                     $('#outline-panel').addClass('d-none');
                     $('#content-placeholder').removeClass('d-none');
+                    // Disable regenerate and save buttons while loading
+                    $('#btn-regenerate').prop('disabled', true).css('opacity', '0.5');
+                    $('#btn-save').prop('disabled', true).css('opacity', '0.5');
+                    $('#btn-save-create').prop('disabled', true).css('opacity', '0.5');
 
                     $.ajax({
                         url: '/ai/generate-blog-idea',
@@ -767,15 +798,34 @@
                         data: formData,
                         success: function (res) {
                             generatedIdeas = res.data?.ai_response?.blog_ideas || [];
+                            currentSessionId = res.data?.sessionId || null;
                             renderBlogIdeas(generatedIdeas);
+                            $('#btn-regenerate').prop('disabled', false).css('opacity', '1');
                         },
-                        error: function (err) {
-                            console.log('Form submission error:', err);
-                            // Hide spinner, show placeholder again on error
+                        error: function (xhr) {
+                            const msg = xhr.responseJSON?.message
+                                || 'Something went wrong. Please try again.';
+
                             $('#idea-spinner').addClass('d-none');
-                            $('#idea-placeholder').removeClass('d-none');
+                            $('#idea-placeholder').addClass('d-none');
+                            $('#idea-list').addClass('d-none');
+
+                            // Show inline error banner
+                            $('#idea-error-msg').text(msg);
+                            $('#idea-error-banner').removeClass('d-none');
+
+                            $('#btn-regenerate').prop('disabled', false).css('opacity', '1');
                         }
                     });
+                }
+
+                $('#aiConfigForm').on('submit', function (e) {
+                    e.preventDefault();
+                    triggerGeneration();
+                });
+
+                $('#btn-regenerate').on('click', function () {
+                    triggerGeneration();
                 });
 
                 // Idea card click — show outline in Content column
@@ -784,10 +834,66 @@
                     $(this).addClass('active');
 
                     const idx = parseInt($(this).data('index'));
+                    activeIdeaIndex = idx;
                     const idea = generatedIdeas[idx];
                     if (!idea) return;
 
                     renderOutline(idea);
+                    
+                    // Enable save buttons now that an idea is selected
+                    $('#btn-save').prop('disabled', false).css('opacity', '1');
+                    $('#btn-save-create').prop('disabled', false).css('opacity', '1');
+                });
+
+                // ── Save Logic ──
+                function saveOutlineData(callback) {
+                    if (activeIdeaIndex === null || !currentConfig) return;
+                    
+                    const selectedIdea = generatedIdeas[activeIdeaIndex];
+                    const payload = {
+                        title: selectedIdea.title,
+                        outline: selectedIdea.outline,
+                        config: currentConfig,
+                        sessionId: currentSessionId
+                    };
+
+                    $.ajax({
+                        url: '/ai/save-outline',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                        success: function (res) {
+                            if (callback) callback(res.data.id);
+                        },
+                        error: function (err) {
+                            console.log('Error saving outline:', err);
+                            alert('Failed to save the outline. Please try again.');
+                        }
+                    });
+                }
+
+                $('#btn-save').on('click', function () {
+                    const btn = $(this);
+                    const originalHtml = btn.html();
+                    btn.html('<i class="fas fa-spinner fa-spin"></i> Saving...').prop('disabled', true);
+                    
+                    saveOutlineData(function(savedId) {
+                        btn.html('<i class="fas fa-check"></i> Saved!').removeClass('btn-light').addClass('btn-success');
+                        setTimeout(() => {
+                            btn.html(originalHtml).prop('disabled', false).removeClass('btn-success').addClass('btn-light');
+                        }, 2000);
+                    });
+                });
+
+                $('#btn-save-create').on('click', function () {
+                    const btn = $(this);
+                    const originalHtml = btn.html();
+                    btn.html('<i class="fas fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
+                    
+                    saveOutlineData(function(savedId) {
+                        // Redirect to the blog editor passing the saved outline ID
+                        window.location.href = `/create-blog?outlineId=${savedId}`;
+                    });
                 });
             });
 

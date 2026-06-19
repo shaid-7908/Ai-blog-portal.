@@ -15,4 +15,6 @@ export interface UserDocument extends Document {
   isVerified: boolean;
   isDeleted:boolean;
   isActive:boolean;
+  totalAiRequest:number,
+  totalAiToken:number,
 }

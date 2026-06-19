@@ -12,6 +12,8 @@ export const userSchema = new Schema<UserDocument>(
         password: { type: String, required: true },
         refreshToken: { type: String, default: '' },
         role: { type: Schema.Types.ObjectId, ref: 'Role', required: true },
+        totalAiRequest:{type:Number,default:0},
+        totalAiToken:{type:Number,default:0},
         isDeleted:{type:Boolean,default:false},
         isActive: { type: Boolean, default: true },
     },

@@ -56,13 +56,6 @@ export const AIGenerationSessionSchema = new Schema<AIGenerationSessionDocument>
         userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         input: { type: AIGenerationInputSchema, required: true },
         output: { type: AIGenerationOutputSchema, default: null },
-        status: {
-            type: String,
-            enum: Object.values(AIGenerationSessionStatusEnum),
-            default: AIGenerationSessionStatusEnum.PENDING,
-        },
-        selectedIdeaIndex: { type: Number, default: null },
-        linkedBlogId: { type: Schema.Types.ObjectId, ref: 'Blog', default: null },
     },
     {
         timestamps: true,
@@ -70,11 +63,10 @@ export const AIGenerationSessionSchema = new Schema<AIGenerationSessionDocument>
     }
 );
 
-// ── Indexes ──────────────────────────────────────────────────────────────────
+// ── Indexes ─────────────────────────────────────────────────────────────────
 
 AIGenerationSessionSchema.index({ userId: 1, createdAt: -1 }); // List sessions by user, latest first
-AIGenerationSessionSchema.index({ status: 1 });                 // Filter by status
-AIGenerationSessionSchema.index({ linkedBlogId: 1 });           // Look up session from a blog
+// Look up session from a blog
 
 export const AIGenerationSessionModel = model<AIGenerationSessionDocument>(
     'AIGenerationSession',
