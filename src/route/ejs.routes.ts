@@ -10,6 +10,10 @@ ejsRouter.get("/", async (req, res) => {
     res.redirect('/dashboard');
 })
 
+ejsRouter.get('/ai-editor',async (req,res)=>{
+    res.render('ai-editor')
+})
+
 ejsRouter.get("/dashboard", verifyAccessTokenEJS, async (req, res) => {
     res.render("index")
 })

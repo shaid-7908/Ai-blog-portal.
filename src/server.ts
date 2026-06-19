@@ -11,6 +11,7 @@ import userManagentRouter from './route/usermanagement.routes';
 import blogCategoryRouter from './route/blogcategory.routes';
 import blogRouter from './route/blog.routes';
 import ejsRouter from './route/ejs.routes';
+import aiFunctionsRouter from './route/aifunctions.routes';
 
 
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 
 app.use('',ejsRouter)
+app.use('/ai',aiFunctionsRouter)
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1/user-management',userManagentRouter)

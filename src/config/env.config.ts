@@ -12,7 +12,8 @@ const envConfig = {
   AWS_REGION:process.env.AWS_REGION as string,
   AWS_ACCESSKEY:process.env.AWS_ACCESSKEY as string,
   AWS_SECRETKEY:process.env.AWS_SECRETKEY as string,
-  AWS_BUCKET:process.env.AWS_BUCKET as string
+  AWS_BUCKET:process.env.AWS_BUCKET as string,
+  GROQ_API_KEY:process.env.GROQ_API_KEY as string
 };
 
 export default envConfig

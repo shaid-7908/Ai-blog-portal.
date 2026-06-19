@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        /* Writing Tone Buttons */
+        .tone-btn {
+            background-color: #ffffff;
+            border: 1px solid #d1d3e2;
+            color: #5a5c69;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .tone-btn:hover {
+            border-color: #b7b9cc;
+            background-color: #f8f9fc;
+            color: #2e3752;
+        }
+
+        .tone-btn.active {
+            background-color: #eaecf4 !important;
+            border: 2px solid #4e73df !important;
+            color: #4e73df !important;
+        }
+
+        /* Keywords Tag Input */
+        .tags-input-container {
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .tags-input-container:focus-within {
+            border-color: #bac8f3 !important;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .tag-chip {
+            background-color: #eaecf4;
+            color: #2e3752;
+            padding: 0.3rem 0.55rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: 1px solid #dddfeb;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .tag-chip .remove-tag,
+        .tag-chip .remove-category {
+            color: #beccd6;
+            margin-left: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+
+        .tag-chip .remove-tag:hover,
+        .tag-chip .remove-category:hover {
+            color: #e74a3b;
+        }
+
+        /* Custom Slider Range styling */
+        #word-count-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #eaecf4;
+            border-radius: 5px;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        #word-count-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #4e73df;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        #word-count-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        #word-count-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #4e73df;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        #word-count-slider::-moz-range-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        /* Select Customizations */
+        .custom-select-premium {
+            border-radius: 6px;
+            border: 1px solid #d1d3e2;
+            height: auto;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .custom-select-premium:focus {
+            border-color: #bac8f3;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        /* Idea Selector Tabs */
+        .idea-tab {
+            background: #f8f9fc;
+            border: 1px solid #e3e6f0;
+            border-radius: 6px;
+            padding: 0.45rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #5a5c69;
+            cursor: pointer;
+            transition: all 0.18s;
+            white-space: nowrap;
+        }
+
+        .idea-tab:hover {
+            background: #eaecf4;
+            border-color: #c0c4d6;
+        }
+
+        .idea-tab.active {
+            background: #1a2a47;
+            border-color: #1a2a47;
+            color: #fff;
+        }
+
+        /* Outline Tree */
+        .outline-section-heading {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #2e3752;
+            margin-bottom: 4px;
+        }
+
+        .outline-key-point {
+            font-size: 0.78rem;
+            color: #5a5c69;
+            padding-left: 14px;
+            position: relative;
+            line-height: 1.55;
+        }
+
+        .outline-key-point::before {
+            content: '–';
+            position: absolute;
+            left: 0;
+            color: #b7b9cc;
+        }
+
+        .outline-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #b7b9cc;
+            margin-bottom: 4px;
+            margin-top: 10px;
+        }
+
+        .outline-intro-text,
+        .outline-conclusion-text {
+            font-size: 0.78rem;
+            color: #5a5c69;
+            line-height: 1.55;
+            font-style: italic;
+        }
+
+        /* Content Editor */
+        #ai-content-editor {
+            width: 100%;
+            min-height: 420px;
+            border: 1px solid #d1d3e2;
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: #3d3d4e;
+            resize: vertical;
+            font-family: 'Nunito', sans-serif;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            background: #fdfeff;
+        }
+
+        #ai-content-editor:focus {
+            outline: none;
+            border-color: #bac8f3;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.18);
+        }
+
+        #ai-content-editor:disabled {
+            background: #f8f9fc;
+            color: #b7b9cc;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #1a2a47 0%, #2e4882 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.55rem 1.4rem;
+            font-size: 0.87rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            transition: opacity 0.18s, transform 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .generate-btn:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #outline-placeholder,
+        #content-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: #c0c4d6;
+            text-align: center;
+        }
+
+        /* Idea Selection Cards */
+        .idea-card:hover {
+            border-color: #bac8f3 !important;
+            background: #f8f9fc !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(78, 115, 223, 0.1);
+        }
+
+        .idea-card.active {
+            border-color: #4e73df !important;
+            background: #f0f4ff !important;
+            box-shadow: 0 2px 10px rgba(78, 115, 223, 0.15);
+        }
+
+        .idea-card.active p {
+            color: #1a2a47 !important;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+
+        <!-- End of Sidebar -->
+        <%- include('components/sidebar') %>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+
+                    <!-- Topbar -->
+                    <%- include('components/topbar') %>
+                        <!-- End of Topbar -->
+
+                        <!-- Begin Page Content -->
+                        <div class="container-fluid">
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="card shadow mb-4"
+                                        style="border: none; border-radius: 8px; overflow: hidden;">
+                                        <div class="card-header py-3 d-flex align-items-center"
+                                            style="background-color: #f0f4f9; border-bottom: 1px solid #e3e6f0;">
+                                            <h6 class="m-0 font-weight-bold text-dark"
+                                                style="font-size: 1rem; letter-spacing: 0.2px;">1. AI Configuration &
+                                                Control</h6>
+                                        </div>
+                                        <div class="card-body" style="padding: 1.25rem 1.5rem;">
+                                            <div class="mb-3 text-primary"
+                                                style="font-size: 0.85rem; font-weight: 600;">
+                                                <i class="far fa-file-alt mr-1"></i> File: AI Blog Generator.docx
+                                            </div>
+                                            <form id="aiConfigForm" enctype="multipart/form-data">
+                                                <!-- Topic Field -->
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-gray-800 mb-1"
+                                                        style="font-size: 0.85rem;">Topic</label>
+                                                    <input type="text" class="form-control" id="topic-input"
+                                                        name="topic" placeholder="The Future of Web Development"
+                                                        value="The Future of Web Development"
+                                                        style="border-radius: 6px; border: 1px solid #d1d3e2; padding: 0.55rem 0.75rem; font-size: 0.9rem;">
+                                                    <small class="form-text text-muted mt-1"
+                                                        style="font-size: 0.72rem; color: #858796;">e.g. The Future of
+                                                        Web Development</small>
+                                                </div>
+
+                                                <!-- Category Field -->
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-gray-800 mb-1"
+                                                        style="font-size: 0.85rem;">Categories</label>
+                                                    <div class="tags-input-container d-flex flex-wrap align-items-center"
+                                                        style="border: 1px solid #d1d3e2; border-radius: 6px; padding: 0.4rem 0.5rem; background-color: #fff; min-height: 42px;">
+                                                        <div id="category-chips" class="d-flex flex-wrap"></div>
+                                                        <select class="custom-select-premium" id="category-select"
+                                                            style="border: none; outline: none; flex-grow: 1; min-width: 150px; font-size: 0.9rem; padding: 0.2rem 0; background: transparent; height: auto; box-shadow: none; cursor: pointer;">
+                                                            <option value="" disabled selected>Select category...
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <small class="form-text text-muted mt-1"
+                                                        style="font-size: 0.72rem; color: #858796;">Select one or more
+                                                        categories for this content</small>
+                                                    <input type="hidden" name="categories" id="categories-hidden"
+                                                        value="">
+                                                </div>
+
+                                                <!-- Keywords Field -->
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-gray-800 mb-1"
+                                                        style="font-size: 0.85rem;">Keywords</label>
+                                                    <div id="keyword-tags-container"
+                                                        class="tags-input-container d-flex flex-wrap align-items-center"
+                                                        style="border: 1px solid #d1d3e2; border-radius: 6px; padding: 0.4rem 0.5rem; background-color: #fff; min-height: 42px; cursor: text;">
+                                                        <div id="keyword-chips" class="d-flex flex-wrap">
+                                                            <span class="tag-chip">React<a href="#" class="remove-tag"
+                                                                    data-tag="React">&times;</a></span>
+                                                            <span class="tag-chip">Microservices<a href="#"
+                                                                    class="remove-tag"
+                                                                    data-tag="Microservices">&times;</a></span>
+                                                            <span class="tag-chip">WASM<a href="#" class="remove-tag"
+                                                                    data-tag="WASM">&times;</a></span>
+                                                        </div>
+                                                        <input type="text" id="keyword-input" placeholder=""
+                                                            style="border: none; outline: none; flex-grow: 1; min-width: 80px; font-size: 0.9rem; padding: 0.2rem 0;">
+                                                    </div>
+                                                    <small class="form-text text-muted mt-1"
+                                                        style="font-size: 0.72rem; color: #858796;">e.g. React,
+                                                        Microservices, WASM</small>
+                                                    <input type="hidden" name="keywords" id="keywords-hidden"
+                                                        value="React,Microservices,WASM">
+                                                </div>
+
+                                                <!-- Writing Tone Field -->
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-gray-800 mb-1"
+                                                        style="font-size: 0.85rem;">Writing Tone</label>
+                                                    <div class="d-flex" style="gap: 8px;">
+                                                        <button type="button"
+                                                            class="btn flex-fill d-flex flex-column align-items-center justify-content-center tone-btn active"
+                                                            data-tone="Professional"
+                                                            style="border-radius: 6px; padding: 0.55rem 0.35rem; font-size: 0.82rem; font-weight: 600; min-height: 72px;">
+                                                            <i class="fas fa-pencil-alt mb-2"
+                                                                style="font-size: 1.05rem;"></i>
+                                                            Professional
+                                                        </button>
+                                                        <button type="button"
+                                                            class="btn flex-fill d-flex flex-column align-items-center justify-content-center tone-btn"
+                                                            data-tone="Authoritative"
+                                                            style="border-radius: 6px; padding: 0.55rem 0.35rem; font-size: 0.82rem; font-weight: 600; min-height: 72px;">
+                                                            <i class="fas fa-users mb-2"
+                                                                style="font-size: 1.05rem;"></i>
+                                                            Authoritative
+                                                        </button>
+                                                        <button type="button"
+                                                            class="btn flex-fill d-flex flex-column align-items-center justify-content-center tone-btn"
+                                                            data-tone="Engaging"
+                                                            style="border-radius: 6px; padding: 0.55rem 0.35rem; font-size: 0.82rem; font-weight: 600; min-height: 72px;">
+                                                            <i class="fas fa-bullhorn mb-2"
+                                                                style="font-size: 1.05rem;"></i>
+                                                            Engaging
+                                                        </button>
+                                                    </div>
+                                                    <input type="hidden" name="writing_tone" id="writing-tone-hidden"
+                                                        value="Professional">
+                                                </div>
+
+                                                <!-- Target Audience Field -->
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold text-gray-800 mb-1"
+                                                        style="font-size: 0.85rem;">Target Audience</label>
+                                                    <select class="form-control custom-select-premium"
+                                                        id="audience-select" name="target_audience">
+                                                        <option value="Beginners, Mid-Level, Experts" selected>
+                                                            Beginners, Mid-Level, Experts</option>
+                                                        <option value="Developers">Developers & Engineers</option>
+                                                        <option value="Business Professionals">Business Professionals
+                                                        </option>
+                                                        <option value="General Public">General Public</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Word Count Range Field -->
+                                                <div class="form-group mb-4">
+                                                    <label class="font-weight-bold text-gray-800 mb-1"
+                                                        style="font-size: 0.85rem;">Word Count Range</label>
+                                                    <div class="text-center font-weight-bold mb-1" id="word-count-value"
+                                                        style="font-size: 0.9rem; color: #2e3752;">1000 - 2000</div>
+                                                    <div class="px-1">
+                                                        <input type="range" id="word-count-slider" name="word_count"
+                                                            min="500" max="3000" step="100" value="1500">
+                                                        <div class="d-flex justify-content-between text-muted"
+                                                            style="font-size: 0.72rem; margin-top: -4px;">
+                                                            <span>1000</span>
+                                                            <span>2000</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Submit Button -->
+                                                <button type="submit"
+                                                    class="btn btn-block py-2 text-white font-weight-bold shadow-sm"
+                                                    style="background-color: #1a2a47; border-radius: 6px; border: none; font-size: 0.9rem; transition: background-color 0.2s;">
+                                                    Begin Content Generation
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card 2: Structure & Outline -->
+                                <div class="col-8">
+                                    <div class="card shadow mb-4" style="border: none; border-radius: 8px; overflow: hidden; height: 100%;">
+                                        <div class="card-header py-3 d-flex align-items-center justify-content-between" style="background-color: #f0f4f9; border-bottom: 1px solid #e3e6f0;">
+                                            <h6 class="m-0 font-weight-bold text-dark" style="font-size: 1rem; letter-spacing: 0.2px;">
+                                                <i class="fas fa-sitemap mr-2 text-primary" style="font-size:0.85rem;"></i>Structure &amp; Outline
+                                            </h6>
+                                            <div class="d-flex" style="gap: 6px;">
+                                                <button type="button" id="btn-regenerate" disabled
+                                                    style="display:inline-flex; align-items:center; gap:5px; padding:0.38rem 0.85rem; font-size:0.78rem; font-weight:600; border-radius:5px; border:1px solid #d1d3e2; background:#fff; color:#5a5c69; cursor:not-allowed; opacity:0.6; transition:all 0.18s;">
+                                                    <i class="fas fa-redo-alt" style="font-size:0.72rem;"></i> Regenerate
+                                                </button>
+                                                <button type="button" id="btn-save" disabled
+                                                    style="display:inline-flex; align-items:center; gap:5px; padding:0.38rem 0.85rem; font-size:0.78rem; font-weight:600; border-radius:5px; border:1px solid #d1d3e2; background:#fff; color:#5a5c69; cursor:not-allowed; opacity:0.6; transition:all 0.18s;">
+                                                    <i class="fas fa-save" style="font-size:0.72rem;"></i> Save
+                                                </button>
+                                                <button type="button" id="btn-save-create" disabled
+                                                    style="display:inline-flex; align-items:center; gap:5px; padding:0.38rem 0.9rem; font-size:0.78rem; font-weight:700; border-radius:5px; border:none; background: linear-gradient(135deg, #1a2a47 0%, #2e4882 100%); color:#fff; cursor:not-allowed; opacity:0.5; transition:all 0.18s;">
+                                                    <i class="fas fa-feather-alt" style="font-size:0.72rem;"></i> Save &amp; Create Blog
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-0 d-flex" style="min-height: 480px;">
+
+                                            <!-- Left: Idea Titles -->
+                                            <div style="width: 38%; border-right: 1px solid #e3e6f0; padding: 1rem; overflow-y: auto;height:100%">
+
+                                                <!-- Loading Spinner -->
+                                                <div id="idea-spinner" class="d-none" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; color:#b7b9cc;">
+                                                    <i class="fas fa-spinner fa-spin" style="font-size:2rem; margin-bottom:10px;"></i>
+                                                    <p class="mb-0" style="font-size:0.8rem;">Generating ideas...</p>
+                                                </div>
+
+                                                <!-- Empty State -->
+                                                <div id="idea-placeholder" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; color:#c0c4d6; text-align:center;">
+                                                    <i class="fas fa-drafting-compass" style="font-size:2rem; margin-bottom:10px;"></i>
+                                                    <p class="mb-0" style="font-size:0.8rem;">Submit the config form to<br>generate blog ideas.</p>
+                                                </div>
+
+                                                <!-- Idea List -->
+                                                <div id="idea-list" class="d-none"></div>
+
+                                            </div>
+
+                                            <!-- Right: Outline Panel -->
+                                            <div style="width: 62%; padding: 1rem; overflow-y: auto;height: 100%;">
+
+                                                <!-- Empty State -->
+                                                <div id="content-placeholder" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:200px; color:#c0c4d6; text-align:center;">
+                                                    <i class="fas fa-list-alt" style="font-size:2rem; margin-bottom:10px;"></i>
+                                                    <p class="mb-0" style="font-size:0.8rem;">Select an idea to see its full outline.</p>
+                                                </div>
+
+                                                <!-- Outline Panel -->
+                                                <div id="outline-panel" class="d-none">
+                                                    <div class="mb-3">
+                                                        <p class="outline-label">Title</p>
+                                                        <p id="outline-title" class="font-weight-bold" style="font-size: 0.9rem; color: #2e3752; line-height:1.45;"></p>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <p class="outline-label">Introduction</p>
+                                                        <p id="outline-intro" class="outline-intro-text"></p>
+                                                    </div>
+                                                    <div id="outline-body-sections" class="mb-2"></div>
+                                                    <div>
+                                                        <p class="outline-label">Conclusion</p>
+                                                        <p id="outline-conclusion" class="outline-conclusion-text"></p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <!-- /.container-fluid -->
+
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Your Website 2021</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+
+            </div>
+            <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('components/commonscript') %>
+
+        <script>
+            $(document).ready(function () {
+                // ── Word Count Range Slider ──
+                const slider = $('#word-count-slider');
+                const display = $('#word-count-value');
+
+                slider.on('input', function () {
+                    const val = parseInt($(this).val());
+                    const minRange = Math.max(500, val - 500);
+                    const maxRange = val + 500;
+                    display.text(minRange + ' - ' + maxRange);
+                });
+                // Initial call to set range based on initial slider value (1500 -> 1000 - 2000)
+                slider.trigger('input');
+
+                // ── Writing Tone Selection ──
+                $('.tone-btn').on('click', function () {
+                    $('.tone-btn').removeClass('active');
+                    $(this).addClass('active');
+                    $('#writing-tone-hidden').val($(this).data('tone'));
+                });
+
+                // ── Keywords Tag Input ──
+                const tagInputContainer = $('#keyword-tags-container');
+                const keywordInput = $('#keyword-input');
+                const keywordChips = $('#keyword-chips');
+                const keywordsHidden = $('#keywords-hidden');
+
+                // Array to store current tags
+                let tags = ['React', 'Microservices', 'WASM'];
+
+                function renderTags() {
+                    keywordChips.empty();
+                    tags.forEach(function (tag) {
+                        keywordChips.append(`
+                        <span class="tag-chip">
+                            ${tag}
+                            <a href="#" class="remove-tag" data-tag="${tag}">&times;</a>
+                        </span>
+                    `);
+                    });
+                    keywordsHidden.val(tags.join(','));
+                }
+
+                // Focus input when container is clicked
+                tagInputContainer.on('click', function (e) {
+                    if (e.target !== keywordInput[0]) {
+                        keywordInput.focus();
+                    }
+                });
+
+                // Add tag on Enter or Comma
+                keywordInput.on('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        let tag = keywordInput.val().trim().replace(/,/g, '');
+                        if (tag && !tags.includes(tag)) {
+                            tags.push(tag);
+                            renderTags();
+                            keywordInput.val('');
+                        }
+                    } else if (e.key === 'Backspace' && keywordInput.val() === '' && tags.length > 0) {
+                        tags.pop();
+                        renderTags();
+                    }
+                });
+
+                // Remove tag
+                keywordChips.on('click', '.remove-tag', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const tagToRemove = $(this).data('tag');
+                    tags = tags.filter(t => t !== tagToRemove);
+                    renderTags();
+                });
+
+                // ── Dynamic Category Population & Multi-Select ──
+                let allCategories = [
+                    { _id: 'technology', name: 'Technology', slug: 'technology' },
+                    { _id: 'business', name: 'Business', slug: 'business' },
+                    { _id: 'finance', name: 'Finance', slug: 'finance' },
+                    { _id: 'lifestyle', name: 'Lifestyle', slug: 'lifestyle' },
+                    { _id: 'health', name: 'Health & Wellness', slug: 'health' }
+                ];
+                let selectedCategories = [];
+
+                function renderCategorySelect() {
+                    const select = $('#category-select');
+                    select.empty();
+                    select.append('<option value="" disabled selected>Select category...</option>');
+
+                    allCategories.forEach(function (cat) {
+                        if (!selectedCategories.some(c => c._id === cat._id)) {
+                            select.append(`<option value="${cat._id}">${cat.name}</option>`);
+                        }
+                    });
+                }
+
+                function renderCategories() {
+                    const chipsContainer = $('#category-chips');
+                    chipsContainer.empty();
+
+                    selectedCategories.forEach(function (cat) {
+                        chipsContainer.append(`
+                        <span class="tag-chip">
+                            ${cat.name}
+                            <a href="#" class="remove-category" data-id="${cat._id}">&times;</a>
+                        </span>
+                    `);
+                    });
+
+                    $('#categories-hidden').val(selectedCategories.map(c => c._id).join(','));
+                    renderCategorySelect();
+                }
+
+                $('#category-select').on('change', function () {
+                    const selectedVal = $(this).val();
+                    if (!selectedVal) return;
+
+                    const catObj = allCategories.find(c => c._id === selectedVal);
+                    if (catObj && !selectedCategories.some(c => c._id === selectedVal)) {
+                        selectedCategories.push(catObj);
+                        renderCategories();
+                    }
+
+                    $(this).val('');
+                });
+
+                $('#category-chips').on('click', '.remove-category', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const idToRemove = $(this).data('id');
+                    selectedCategories = selectedCategories.filter(c => c._id !== idToRemove);
+                    renderCategories();
+                });
+
+                $.ajax({
+                    url: '/api/v1/blog-category/get-all?limit=100&isActive=true',
+                    method: 'GET',
+                    success: function (res) {
+                        if (res.success && res.data && res.data.docs && res.data.docs.length > 0) {
+                            allCategories = res.data.docs;
+                        }
+
+                        const defaultCat = allCategories.find(cat => cat.slug === 'technology' || cat._id === 'technology');
+                        if (defaultCat && selectedCategories.length === 0) {
+                            selectedCategories.push(defaultCat);
+                        }
+                        renderCategories();
+                    },
+                    error: function (err) {
+                        console.log('Failed to fetch categories, falling back to static options.', err);
+                        const defaultCat = allCategories.find(cat => cat.slug === 'technology');
+                        if (defaultCat && selectedCategories.length === 0) {
+                            selectedCategories.push(defaultCat);
+                        }
+                        renderCategories();
+                    }
+                });
+
+                // ── Blog Idea Generation & Outline Rendering ──
+                let generatedIdeas = [];
+
+                $('#aiConfigForm').on('submit', function (e) {
+                    e.preventDefault();
+                    const formData = $(this).serialize();
+
+                    // Show spinner, hide placeholders and old results
+                    $('#idea-placeholder').addClass('d-none');
+                    $('#idea-list').addClass('d-none').empty();
+                    $('#idea-spinner').removeClass('d-none').css('display', 'flex');
+                    $('#outline-panel').addClass('d-none');
+                    $('#content-placeholder').removeClass('d-none');
+
+                    $.ajax({
+                        url: '/ai/generate-blog-idea',
+                        method: 'POST',
+                        data: formData,
+                        success: function (res) {
+                            generatedIdeas = res.data?.ai_response?.blog_ideas || [];
+                            renderBlogIdeas(generatedIdeas);
+                        },
+                        error: function (err) {
+                            console.log('Form submission error:', err);
+                            // Hide spinner, show placeholder again on error
+                            $('#idea-spinner').addClass('d-none');
+                            $('#idea-placeholder').removeClass('d-none');
+                        }
+                    });
+                });
+
+                // Idea card click — show outline in Content column
+                $(document).on('click', '.idea-card', function () {
+                    $('.idea-card').removeClass('active');
+                    $(this).addClass('active');
+
+                    const idx = parseInt($(this).data('index'));
+                    const idea = generatedIdeas[idx];
+                    if (!idea) return;
+
+                    renderOutline(idea);
+                });
+            });
+
+            function renderBlogIdeas(ideasArray) {
+                const list = $('#idea-list');
+                list.empty();
+
+                ideasArray.forEach(function (idea, index) {
+                    list.append(`
+                        <div class="idea-card p-2 mb-2" data-index="${index}"
+                             style="border:1px solid #e3e6f0; border-radius:6px; cursor:pointer; transition: all 0.18s; background:#fff;">
+                            <div class="d-flex align-items-start">
+                                <span style="font-size:0.7rem; font-weight:700; background:#eaecf4; color:#4e73df; border-radius:4px; padding:2px 7px; margin-right:8px; flex-shrink:0; margin-top:2px;">Idea ${index + 1}</span>
+                                <p class="mb-0" style="font-size:0.82rem; font-weight:600; color:#2e3752; line-height:1.4;">${idea.title}</p>
+                            </div>
+                        </div>
+                    `);
+                });
+
+                // Hide spinner, show list
+                $('#idea-spinner').addClass('d-none');
+                $('#idea-list').removeClass('d-none');
+
+                // Auto-select first idea
+                if (ideasArray.length > 0) {
+                    $('.idea-card').first().addClass('active');
+                    renderOutline(ideasArray[0]);
+                }
+            }
+
+            function renderOutline(idea) {
+                $('#outline-title').text(idea.title);
+                $('#outline-intro').text(idea.outline.introduction);
+                $('#outline-conclusion').text(idea.outline.conclusion);
+
+                const bodyContainer = $('#outline-body-sections');
+                bodyContainer.empty();
+
+                idea.outline.body_sections.forEach(function (section) {
+                    let pointsHtml = section.key_points.map(function (pt) {
+                        return `<p class="outline-key-point mb-1">${pt}</p>`;
+                    }).join('');
+
+                    bodyContainer.append(`
+                        <div class="mb-3">
+                            <p class="outline-section-heading">${section.section_heading}</p>
+                            ${pointsHtml}
+                        </div>
+                    `);
+                });
+
+                // Show outline, hide placeholder
+                $('#content-placeholder').addClass('d-none');
+                $('#outline-panel').removeClass('d-none');
+            }
+        </script>
+
+</body>
+
+</html>
